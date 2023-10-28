@@ -4,13 +4,11 @@ import wave
 import numpy as np
 import threading
 
-def start_recording():
-    SERVER_IP = "127.0.0.1"
-    SERVER_PORT = 5000
-    WAV_OUTPUT_FILENAME = "output.wav"
-
+def start_recording(server_ip = "10.0.0.106", server_port=5000, output_file_name="output.wav"):
+    print("server_ip: ", server_ip)
+    print("port: ", server_port)
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((SERVER_IP, SERVER_PORT))
+    client_socket.connect((server_ip.strip(), server_port))
 
     metadata_bytes = client_socket.recv(1024)
     metadata = json.loads(metadata_bytes.decode('utf-8'))
@@ -19,7 +17,7 @@ def start_recording():
     DTYPE = np.dtype(metadata['dtype'])
     BUFFER_SIZE = metadata['buffer_size']
 
-    wav_file = wave.open(WAV_OUTPUT_FILENAME, 'wb')
+    wav_file = wave.open(output_file_name, 'wb')
     wav_file.setnchannels(CHANNELS)
     wav_file.setsampwidth(DTYPE.itemsize)
     wav_file.setframerate(RATE)
@@ -56,7 +54,9 @@ while True:
     if choice == '1':
         if not recording:
             recording = True
-            thread = threading.Thread(target=start_recording)
+            server_ip = input("Informe o endereço IP do servidor: ")
+            server_port = int(input("Informe a porta de conexão: "))
+            thread = threading.Thread(target=start_recording, args=(server_ip, server_port))
             thread.start()
             print("Gravação iniciada.")
         else:
