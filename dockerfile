@@ -10,8 +10,8 @@ WORKDIR /app
 COPY . /app
 
 # Instale as dependências Python, se necessário
-RUN pip freeze > dependencies.txt
-RUN pip install -r dependencies.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-# Inicie seu aplicativo Python usando o PM2
-CMD ["publishAudioTCP.py"]
+ENTRYPOINT ["python3", "publishAudioTCP.py"] 
+
