@@ -1,8 +1,13 @@
+# TODO:
+#     If environment is production, connect to TVC audio port (line)
+#     else, conect to regular audio port
+
 import json
 import sounddevice as sd
 import numpy as np
 import socket
 import threading
+import os
 
 def get_device_info(device_id):
     device_info = sd.query_devices(device_id, 'input')
@@ -39,6 +44,18 @@ def start_streaming(device_id, rate):
     finally:
         conn.close()
         server_socket.close()
+
+# Begin
+ENVIRONMENT = os.environ.get('ENVIRONMENT')
+
+if ENVIRONMENT is not None:
+    if ENVIRONMENT != "prod" and ENVIRONMENT != "non-prod":
+        raise ValueError('The value for ENVIRONMENT must be "prod" or non-prod"')
+    else: 
+        print(f'This application is running in {ENVIRONMENT} environment')
+else:
+    print('The environment wasn\'t especified. Assuming the as "production"')
+
 
 devices = sd.query_devices()
 
